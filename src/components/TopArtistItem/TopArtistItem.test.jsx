@@ -16,7 +16,7 @@ describe('TopArtistItem component', () => {
             popularity: 85,
             external_urls: { spotify: 'https://open.spotify.com/artist/artist1' }
         };
-        render(<TopArtistItem artist={artist} index={0} />);
+        render(<TopArtistItem artist={artist} index={1} />);
 
         // Verify list item rendering and having expected content
         const listItem = screen.getByTestId(`top-artist-item-${artist.id}`);
