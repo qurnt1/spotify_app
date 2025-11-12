@@ -63,7 +63,7 @@ export default function TopArtistsPage() {
       {!loading && !error && (
         <ol className="artists-list">
           {artists.map((artist, i) => (
-            <TopArtistItem key={artist.id} artist={artist} index={i + 1} />
+            <TopArtistItem key={artist.id} artist={artist} index={i} />
           ))}
         </ol>
       )}
