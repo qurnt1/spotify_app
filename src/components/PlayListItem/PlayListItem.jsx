@@ -6,7 +6,7 @@ import '../ListItem.css';
  * @param {*}  playlist 
  * @returns JSX.Element
  */
-export default function PlayListItem({ playlist }) {
+export default function PlayListItem({ playlist, index }) {
   return (
   <li key={playlist.id} data-testid={`playlist-item-${playlist.id}`} className="list-item playlist-item">
       <img
@@ -16,7 +16,12 @@ export default function PlayListItem({ playlist }) {
       />
       <div className="playlist-item-details">
         <div className="playlist-item-details-header">
-          <div className="playlist-item-title">{playlist.name}</div>
+          <div className="playlist-item-title">
+            {index === 0 && '🥇 : '}
+            {index === 1 && '🥈 : '}
+            {index === 2 && '🥉 : '}
+            {index > 2 && `${index + 1} : `} {playlist.name}
+          </div>
           <div className="playlist-item-owner">By {playlist.owner.display_name}</div>
         </div>
         <div className="playlist-item-tracks">{playlist.tracks.total} tracks</div>
