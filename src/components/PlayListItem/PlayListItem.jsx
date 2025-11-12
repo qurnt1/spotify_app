@@ -1,14 +1,15 @@
+// src/components/PlayListItem/PlayListItem.jsx
 import './PlayListItem.css';
 import '../ListItem.css';
 
 /**
  * Playlist item component
- * @param {*}  playlist 
- * @returns JSX.Element
+ * @param {{playlist: any}} props
+ * @returns {JSX.Element}
  */
-export default function PlayListItem({ playlist, index }) {
+export default function PlayListItem({ playlist }) {
   return (
-  <li key={playlist.id} data-testid={`playlist-item-${playlist.id}`} className="list-item playlist-item">
+    <li data-testid={`playlist-item-${playlist.id}`} className="list-item playlist-item">
       <img
         src={playlist.images[0]?.url}
         alt="cover"
@@ -17,10 +18,7 @@ export default function PlayListItem({ playlist, index }) {
       <div className="playlist-item-details">
         <div className="playlist-item-details-header">
           <div className="playlist-item-title">
-            {index === 0 && '🥇 : '}
-            {index === 1 && '🥈 : '}
-            {index === 2 && '🥉 : '}
-            {index > 2 && `${index + 1} : `} {playlist.name}
+            {playlist.name}
           </div>
           <div className="playlist-item-owner">By {playlist.owner.display_name}</div>
         </div>

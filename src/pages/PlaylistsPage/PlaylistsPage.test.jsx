@@ -9,8 +9,8 @@ import * as tokenUtils from '../../utils/handleTokenError.js';
 import { KEY_ACCESS_TOKEN } from '../../constants/storageKeys.js';
 import { buildTitle } from '../../constants/appMeta.js';
 
-// Mock playlists data
-const playlistsData = {
+// Scenario A: total <= limit
+const playlistsDataSmall = {
   items: [
     { id: 'playlist1', name: 'My Playlist 1', images: [{ url: 'https://via.placeholder.com/56' }], owner: { display_name: 'User1' }, tracks: { total: 5 }, external_urls: { spotify: 'https://open.spotify.com/playlist/playlist1' } },
     { id: 'playlist2', name: 'My Playlist 2', images: [{ url: 'https://via.placeholder.com/56' }], owner: { display_name: 'User2' }, tracks: { total: 10 }, external_urls: { spotify: 'https://open.spotify.com/playlist/playlist2' } },
@@ -18,18 +18,30 @@ const playlistsData = {
   total: 2,
 };
 
+// Scenario B: total > limit (items contient 10, total=15)
+const makeLargeData = () => {
+  const items = Array.from({ length: 10 }, (_, i) => ({
+    id: `playlist${i + 1}`,
+    name: `Playlist ${i + 1}`,
+    images: [{ url: 'https://via.placeholder.com/56' }],
+    owner: { display_name: `Owner${i + 1}` },
+    tracks: { total: (i + 1) * 3 },
+    external_urls: { spotify: `https://open.spotify.com/playlist/playlist${i + 1}` },
+  }));
+  return { items, total: 15 };
+};
+
 const tokenValue = 'test-token';
 
 describe('PlaylistsPage', () => {
   beforeEach(() => {
-    // Mock token
     jest
       .spyOn(window.localStorage.__proto__, 'getItem')
       .mockImplementation(key => (key === KEY_ACCESS_TOKEN ? tokenValue : null));
-    // Default mock API
+
     jest
       .spyOn(spotifyApi, 'fetchUserPlaylists')
-      .mockResolvedValue({ data: playlistsData, error: null });
+      .mockResolvedValue({ data: playlistsDataSmall, error: null });
   });
 
   afterEach(() => {
@@ -47,33 +59,50 @@ describe('PlaylistsPage', () => {
     );
 
   const waitForLoadingToFinish = async () => {
-    // <output> a le rôle implicite "status"
     expect(screen.getByRole('status')).toHaveTextContent(/loading playlists/i);
     await waitFor(() => {
       expect(screen.queryByTestId('loading-indicator')).not.toBeInTheDocument();
     });
   };
 
-  test('rend la page et affiche un H2 "Top N playlist(s)"', async () => {
+  test('<= limit: affiche toutes les playlists et H2 avec le total réel', async () => {
     renderPlaylistsPage();
 
     expect(document.title).toBe(buildTitle('Playlists'));
     await waitForLoadingToFinish();
 
-    expect(spotifyApi.fetchUserPlaylists).toHaveBeenCalledTimes(1);
     expect(spotifyApi.fetchUserPlaylists).toHaveBeenCalledWith(tokenValue, limit);
 
-    const heading1 = await screen.findByRole('heading', { level: 1, name: 'Your Playlists' });
-    expect(heading1).toBeInTheDocument();
+    const h1 = await screen.findByRole('heading', { level: 1, name: 'Your Playlists' });
+    expect(h1).toBeInTheDocument();
 
-    const expectedCount = Math.min(playlistsData.items.length, limit);
-    const h2Label = `Top ${expectedCount} playlist${expectedCount !== 1 ? 's' : ''}`;
-    const countHeading = await screen.findByRole('heading', { level: 2, name: h2Label });
-    expect(countHeading).toBeInTheDocument();
+    const h2 = await screen.findByRole('heading', { level: 2, name: `${playlistsDataSmall.total} playlists` });
+    expect(h2).toBeInTheDocument();
 
-    for (const playlist of playlistsData.items) {
-      expect(await screen.findByTestId(`playlist-item-${playlist.id}`)).toBeInTheDocument();
+    for (const p of playlistsDataSmall.items) {
+      expect(await screen.findByTestId(`playlist-item-${p.id}`)).toBeInTheDocument();
     }
+    // la liste ne doit pas être tronquée
+    expect(screen.getAllByRole('listitem')).toHaveLength(playlistsDataSmall.items.length);
+  });
+
+  test('> limit: tronque l’affichage à 10 mais H2 montre le total du compte', async () => {
+    const bigData = makeLargeData();
+    jest.spyOn(spotifyApi, 'fetchUserPlaylists').mockResolvedValueOnce({ data: bigData, error: null });
+
+    renderPlaylistsPage();
+    await waitForLoadingToFinish();
+
+    const h2 = screen.getByRole('heading', { level: 2, name: `${bigData.total} playlists` });
+    expect(h2).toBeInTheDocument();
+
+    // On doit afficher seulement 10 items
+    const items = screen.getAllByRole('listitem');
+    expect(items).toHaveLength(10);
+
+    // Vérifie que le premier et le dernier visibles existent
+    expect(screen.getByTestId('playlist-item-playlist1')).toBeInTheDocument();
+    expect(screen.getByTestId('playlist-item-playlist10')).toBeInTheDocument();
   });
 
   test('affiche un message d’erreur quand fetchUserPlaylists renvoie error', async () => {
@@ -99,13 +128,11 @@ describe('PlaylistsPage', () => {
   });
 
   test('redirige vers /login quand le token est expiré', async () => {
-    // Mock du handler pour déclencher la navigation
     jest.spyOn(tokenUtils, 'handleTokenError').mockImplementation((err, navigate) => {
       if (err && typeof navigate === 'function') navigate('/login');
-      return true; // indique "géré"
+      return true;
     });
 
-    // Réponse API avec shape compatible avec le composant
     jest
       .spyOn(spotifyApi, 'fetchUserPlaylists')
       .mockResolvedValue({ data: { items: [] }, error: 'The access token expired' });
@@ -126,9 +153,7 @@ describe('PlaylistsPage', () => {
     const heading1 = screen.getByRole('heading', { level: 1, name: 'Your Playlists' });
     expect(heading1).toHaveClass('playlists-title', 'page-title');
 
-    const expectedCount = Math.min(playlistsData.items.length, limit);
-    const h2Label = `Top ${expectedCount} playlist${expectedCount !== 1 ? 's' : ''}`;
-    const heading2 = screen.getByRole('heading', { level: 2, name: h2Label });
+    const heading2 = screen.getByRole('heading', { level: 2, name: `${playlistsDataSmall.total} playlists` });
     expect(heading2).toHaveClass('playlists-count');
 
     const list = screen.getByRole('list');
