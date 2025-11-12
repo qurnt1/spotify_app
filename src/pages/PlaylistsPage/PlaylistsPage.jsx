@@ -33,6 +33,8 @@ export default function PlaylistsPage() {
 
   // Set document title
   useEffect(() => { document.title = buildTitle('Playlists'); }, []);
+  
+  const shownCount = Math.min(playlists.length, limit);
 
 
   useEffect(() => {
@@ -54,7 +56,7 @@ export default function PlaylistsPage() {
   return (
     <section className="playlists-container page-container" aria-labelledby="playlists-title">
       <h1 id="playlists-title" className="playlists-title page-title">Your Playlists</h1>
-      <h2 className="playlists-count">{Math.min(playlists.length, limit)} Playlists</h2>
+      <h2 className="playlists-count">Top {shownCount} playlist{shownCount !== 1 ? 's' : ''}</h2>
       {loading && <output className="playlists-loading" data-testid="loading-indicator">Loading playlists…</output>}
       {error && !loading && <div className="playlists-error" role="alert">{error}</div>}
       {!loading && !error && (
