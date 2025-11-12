@@ -82,7 +82,7 @@ describe('PlaylistsPage', () => {
         expect(heading).toBeInTheDocument();
 
         // should render heading of level 2 showing total playlist count
-        const countHeading = await screen.findByRole('heading', { level: 2, name: `${limit} Playlists` });
+        const countHeading = await screen.findByRole('heading', { level: 2, name: `${playlistsData.items.length} Playlists` });
         expect(countHeading).toBeInTheDocument();
 
         // verify each playlist item rendered, don't check details here as covered in PlaylistItem tests
