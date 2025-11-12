@@ -6,7 +6,16 @@ import '../ListItem.css';
  * @param {*} track  
  * @returns JSX.Element
  */
-export default function TrackItem({ track }) {
+export default function TrackItem({ track, index }) {
+  const getPrefix = (i) => {
+    if (typeof i !== 'number') return '';
+    if (i === 0) return '🥇 : ';
+    if (i === 1) return '🥈 : ';
+    if (i === 2) return '🥉 : ';
+    if (i > 2) return `${i + 1} : `;
+    return '';
+  };
+
   return (
   <li className="list-item track-item" data-testid={`track-item-${track.id}`}>
       <img
@@ -16,7 +25,7 @@ export default function TrackItem({ track }) {
       />
       <div className="track-details">
         <div className="track-details-header">
-          <div className="track-title">{track.name}</div>
+          <div className="track-title">{`${getPrefix(index)}${track.name}`}</div>
           <div className="track-artists">{track.artists.map(a => a.name).join(', ')}</div>
         </div>
         <div className="track-album">{track.album.name}</div>

@@ -61,8 +61,8 @@ export default function TopTracksPage() {
       {error && !loading && <div className="tracks-error" role="alert">{error}</div>}
       {!loading && !error && (
         <ol className="tracks-list">
-          {tracks.map(track => (
-            <TrackItem key={track.id} track={track} />
+          {tracks.slice(0, 10).map((track, i) => (
+            <TrackItem key={track.id} track={track} index={i} />
           ))}
         </ol>
       )}

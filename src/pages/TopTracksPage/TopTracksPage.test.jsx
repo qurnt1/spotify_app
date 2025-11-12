@@ -2,7 +2,7 @@
 
 import { describe, expect, test, beforeEach, afterEach, jest } from '@jest/globals';
 import '@testing-library/jest-dom';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import TopTracksPage, { limit, timeRange } from './TopTracksPage.jsx';
 import * as spotifyApi from '../../api/spotify-me.js';
@@ -54,11 +54,41 @@ describe('TopTracksPage', () => {
     // Helper to wait for loading to finish
     const waitForLoadingToFinish = async () => {
         // initial loading state expectations
-        expect(screen.getByRole('status')).toHaveTextContent(/loading top tracks/i);
+        expect(screen.getByTestId('loading-indicator')).toHaveTextContent(/loading top tracks/i);
         await waitFor(() => {
             expect(screen.queryByTestId('loading-indicator')).not.toBeInTheDocument();
         });
     };
+
+    // helper to build dummy tracks
+    const buildTracks = (n) => {
+        const items = [];
+        for (let i = 0; i < n; i++) {
+            items.push({ id: `track${i + 1}`, name: `Track ${i + 1}`, artists: [{ name: `Artist ${i + 1}` }], album: { name: `Album ${i + 1}`, images: [{ url: `album-${i + 1}.jpg` }] }, popularity: 50, external_urls: { spotify: `https://open.spotify.com/track/track${i + 1}` } });
+        }
+        return { items, total: n };
+    };
+
+    const sizes = [1, 3, 7, 10, 15];
+
+    test.each(sizes)('renders top %i items (limited to 10) and prefixes titles correctly', async (n) => {
+        jest.spyOn(spotifyApi, 'fetchUserTopTracks').mockResolvedValue({ data: buildTracks(n), error: null });
+
+        renderTopTracksPage();
+        await waitForLoadingToFinish();
+
+        const list = screen.getByRole('list');
+        const items = within(list).getAllByRole('listitem');
+        const expectedCount = Math.min(n, 10);
+        expect(items).toHaveLength(expectedCount);
+
+        // check prefixes for rendered items
+        for (let i = 0; i < expectedCount; i++) {
+            const expectedPrefix = i === 0 ? '🥇 : ' : i === 1 ? '🥈 : ' : i === 2 ? '🥉 : ' : `${i + 1} : `;
+            const titleText = `${expectedPrefix}Track ${i + 1}`;
+            expect(screen.getByText(titleText)).toBeInTheDocument();
+        }
+    });
 
     test('renders top tracks page', async () => {
         // Render the TopTracksPage
