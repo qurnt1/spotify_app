@@ -14,55 +14,62 @@ describe('PlayListItem component', () => {
     external_urls: { spotify: 'https://open.spotify.com/playlist/playlist1' },
   };
 
-  test('renders playlist information correctly', () => {
-    // On teste avec index={5}, qui devrait produire le préfixe "6 :"
+  test('renders playlist information correctly (for index 5)', () => {
+    // Ce test utilise index={5}, qui (d'après le 1er log) *ajoute* un préfixe
     render(<PlayListItem playlist={mockPlaylist} index={5} />);
 
-    expect(screen.getByTestId(`playlist-item-${mockPlaylist.id}`)).toBeInTheDocument();
-    expect(screen.getByAltText('cover')).toHaveAttribute('src', mockPlaylist.images[0].url);
+    expect(
+      screen.getByTestId(`playlist-item-${mockPlaylist.id}`)
+    ).toBeInTheDocument();
+    expect(screen.getByAltText('cover')).toHaveAttribute(
+      'src',
+      mockPlaylist.images[0].url
+    );
 
-    // CORRIGÉ : Utilise une RegExp pour trouver le nom, même avec un préfixe ("6 :")
+    // CORRIGÉ : On utilise une RegExp pour trouver le nom,
+    // car le texte réel est "6 : Test Playlist"
     const titleEl = screen.getByText(new RegExp(mockPlaylist.name));
     expect(titleEl).toHaveClass('playlist-item-title');
 
-    // CORRIGÉ : Utilise une RegExp pour ignorer les espaces (" By Test Owner ")
+    // CORRIGÉ : On utilise une RegExp pour ignorer les espaces
     expect(
       screen.getByText(new RegExp(`By ${mockPlaylist.owner.display_name}`))
     ).toBeInTheDocument();
-
-    // CORRIGÉ : Utilise une RegExp pour ignorer les espaces (" 15 tracks ")
     expect(
       screen.getByText(new RegExp(`${mockPlaylist.tracks.total} tracks`))
     ).toBeInTheDocument();
-
-    expect(screen.getByRole('link')).toHaveAttribute('href', mockPlaylist.external_urls.spotify);
+    expect(screen.getByRole('link')).toHaveAttribute(
+      'href',
+      mockPlaylist.external_urls.spotify
+    );
   });
 
   test('does not render medals for first, second, or third item', () => {
     render(<PlayListItem playlist={mockPlaylist} index={0} />);
-    // Ce test suppose qu'il n'y a PAS de médailles. Il est inchangé.
     expect(screen.queryByText(/🥇|🥈|🥉/)).toBeNull();
   });
 
-  // --- ATTENTION : Tests 3 & 4 corrigés ---
-  // Vos tests originaux affirmaient que le préfixe ne devait PAS exister.
-  // Mais le log d'erreur du Test 1 prouve que votre composant *ajoute* bien un préfixe.
-  // J'ai donc corrigé ces tests pour qu'ils vérifient que le préfixe EST BIEN présent.
+  // --- CORRECTION DES TESTS 3 & 4 ---
+  // Ces tests sont rétablis à leur logique d'origine.
+  // Ils vérifient que pour index={4} et index={9}, *aucun* préfixe n'est affiché.
 
-  test('prefixes with numeric index for items (e.g., index 4)', () => {
-    render(<PlayListItem playlist={mockPlaylist} index={4} />); // 5ème item
+  test('does not prefix with numeric index for items after top 3 (e.g., index 4)', () => {
+    render(<PlayListItem playlist={mockPlaylist} index={4} />);
 
-    // CORRIGÉ : On vérifie que le préfixe "5 :" (index 4 + 1) est présent
-    expect(screen.getByText(/5\s:/)).toBeInTheDocument();
-    // On vérifie aussi que le titre est là
-    expect(screen.getByText(new RegExp(mockPlaylist.name))).toBeInTheDocument();
+    // CORRIGÉ : On vérifie que le préfixe "5 :" n'est PAS là
+    expect(screen.queryByText(/5\s:/)).toBeNull();
+
+    // Le titre doit être le nom exact, sans préfixe
+    expect(screen.getByText(mockPlaylist.name)).toBeInTheDocument();
   });
 
-  test('prefixes with numeric index (e.g., index 9)', () => {
-    render(<PlayListItem playlist={mockPlaylist} index={9} />); // 10ème item
+  test('still renders correctly when index is 9 (no "10 :" prefix)', () => {
+    render(<PlayListItem playlist={mockPlaylist} index={9} />);
 
-    // CORRIGÉ : On vérifie que le préfixe "10 :" (index 9 + 1) est présent
-    expect(screen.getByText(/10\s:/)).toBeInTheDocument();
-    expect(screen.getByText(new RegExp(mockPlaylist.name))).toBeInTheDocument();
+    // CORRIGÉ : On vérifie que le préfixe "10 :" n'est PAS là
+    expect(screen.queryByText(/10\s:/)).toBeNull();
+
+    // Le titre doit être le nom exact, sans préfixe
+    expect(screen.getByText(mockPlaylist.name)).toBeInTheDocument();
   });
 });
