@@ -29,43 +29,92 @@ export default function AccountPage() {
     document.title = `Account | Spotify App`;
   }, []);
 
-
   useEffect(() => {
     if (!token) return; // wait for auth check
+
     // fetch user profile when token changes
     fetchAccountProfile(token)
-      .then(res => {
-        if (res.error) {
-          if (!handleTokenError(res.error, navigate)) {
-            setError(res.error);
+      .then((res) => {
+        if (res?.error) {
+          // si le token est expiré, handleTokenError redirige et on s'arrête là
+          if (handleTokenError(res.error, navigate)) {
+            return;
           }
+
+          // autre type d'erreur : on l'affiche et on s'arrête
+          setError(res.error);
+          return;
         }
+
+        // pas d'erreur : on peut utiliser res.data
         setProfile(res.data);
       })
-      .catch(err => { setError(err.message); })
-      .finally(() => { setLoading(false); });
+      .catch((err) => {
+        setError(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [token, navigate]);
 
   return (
-    <section className="account-page page-container" aria-labelledby="account-page-title">
-      <h1 id="account-page-title" className="page-title">Spotify Account Info</h1>
+    <section
+      className="account-page page-container"
+      aria-labelledby="account-page-title"
+    >
+      <h1 id="account-page-title" className="page-title">
+        Spotify Account Info
+      </h1>
+
       {loading && (
-        <output className="account-loading" data-testid="loading-indicator" aria-live="polite">
+        <output
+          className="account-loading"
+          data-testid="loading-indicator"
+          aria-live="polite"
+        >
           Loading account info…
         </output>
       )}
-      {error && !loading && <div className="account-error" role="alert">{error}</div>}
+
+      {error && !loading && (
+        <div className="account-error" role="alert">
+          {error}
+        </div>
+      )}
+
       {!loading && !error && profile && (
         <>
-          <img className="account-avatar" src={profile.images?.[0]?.url} alt="avatar" />
+          <img
+            className="account-avatar"
+            src={profile.images?.[0]?.url}
+            alt="avatar"
+          />
           <h2>{profile.display_name}</h2>
-          <section className="account-details" aria-labelledby="account-details-title">
-            <h3 id="account-details-title" className="sr-only">Account Details</h3>
-            <p className="account-details-item"><b>Email:</b> {profile.email}</p>
-            <p className="account-details-item"><b>Country:</b> {profile.country}</p>
-            <p className="account-details-item"><b>Product:</b> {profile.product}</p>
+          <section
+            className="account-details"
+            aria-labelledby="account-details-title"
+          >
+            <h3 id="account-details-title" className="sr-only">
+              Account Details
+            </h3>
+            <p className="account-details-item">
+              <b>Email:</b> {profile.email}
+            </p>
+            <p className="account-details-item">
+              <b>Country:</b> {profile.country}
+            </p>
+            <p className="account-details-item">
+              <b>Product:</b> {profile.product}
+            </p>
           </section>
-          <a className="account-link" href={profile.external_urls.spotify} target="_blank" rel="noopener noreferrer">Open Spotify Profile</a>
+          <a
+            className="account-link"
+            href={profile.external_urls.spotify}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open Spotify Profile
+          </a>
         </>
       )}
     </section>

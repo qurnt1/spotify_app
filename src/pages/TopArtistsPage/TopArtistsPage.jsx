@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
  */
 export const limit = 10;
 
-/** 
+/**
  * Time range for top artists
  */
 export const timeRange = 'short_term';
@@ -37,29 +37,59 @@ export default function TopArtistsPage() {
   const { token } = useRequireToken();
 
   // Set document title
-  useEffect(() => { document.title = buildTitle('Top Artists'); }, []);
+  useEffect(() => {
+    document.title = buildTitle('Top Artists');
+  }, []);
 
   useEffect(() => {
     if (!token) return; // wait for auth check
+
     // fetch user top artists when token changes
     fetchUserTopArtists(token, limit, timeRange)
-      .then(res => {
-        if (res.error) {
-          if (!handleTokenError(res.error, navigate)) {
-            setError(res.error);
+      .then((res) => {
+        if (res?.error) {
+          if (handleTokenError(res.error, navigate)) {
+            return;
           }
+          setError(res.error);
+          return;
         }
-        setArtists(res.data.items);
+
+        const items = res?.data?.items ?? [];
+        setArtists(items);
       })
-      .catch(err => { setError(err.message); })
-      .finally(() => { setLoading(false); });
+      .catch((err) => {
+        setError(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [token, navigate]);
 
   return (
-    <section className="artists-container page-container" aria-labelledby="artists-title">
-      <h1 id="artists-title" className="artists-title page-title">Your Top {limit} Artists of the Month</h1>
-      {loading && <output className="artists-loading" data-testid="loading-indicator">Loading top artists…</output>}
-      {error && !loading && <div className="artists-error" role="alert">{error}</div>}
+    <section
+      className="artists-container page-container"
+      aria-labelledby="artists-title"
+    >
+      <h1 id="artists-title" className="artists-title page-title">
+        Your Top {limit} Artists of the Month
+      </h1>
+
+      {loading && (
+        <output
+          className="artists-loading"
+          data-testid="loading-indicator"
+        >
+          Loading top artists…
+        </output>
+      )}
+
+      {error && !loading && (
+        <div className="artists-error" role="alert">
+          {error}
+        </div>
+      )}
+
       {!loading && !error && (
         <ol className="artists-list">
           {artists.map((artist, i) => (
