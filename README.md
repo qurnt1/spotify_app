@@ -1,4 +1,4 @@
-[![Build and Test](https://github.com/alexandre-girard-maif/music-discovery-app-template/actions/workflows/ci.yml/badge.svg)](https://github.com/alexandre-girard-maif/music-discovery-app-template/actions/workflows/ci.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=alexandre-girard-maif_music-discovery-app-template&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=alexandre-girard-maif_music-discovery-app-template)  [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=alexandre-girard-maif_music-discovery-app-template&metric=coverage)](https://sonarcloud.io/summary/new_code?id=alexandre-girard-maif_music-discovery-app-template)
+[![Build and Test](https://github.com/qurnt1/spotify_app/actions/workflows/ci.yml/badge.svg)](https://github.com/qurnt1/spotify_app/actions/workflows/ci.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=qurnt1_spotify_app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=qurnt1_spotify_app)  [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=qurnt1_spotify_app&metric=coverage)](https://sonarcloud.io/summary/new_code?id=qurnt1_spotify_app)
 
 
 # Music Discovery App
@@ -8,7 +8,7 @@ Application permettant d'intéroger l'API Spotify pour découvrir de la musique 
 - Authentification utilisateur avec Spotify
 - Affichage des titres, artistes et playlists favoris
 
-Projet template permettant aux étudiants de faire évoluer l'application en ajoutant des fonctionnalités supplémentaires décrites dans le projet github [music-discovery-app-project](https://github.com/users/alexandre-girard-maif/projects/2/views/8).
+Projet template permettant aux étudiants de faire évoluer l'application en ajoutant des fonctionnalités supplémentaires décrites dans le projet github [music-discovery-app-project](https://github.com/users/qurnt1/projects/2/views/8).
 
 Utiliser ce projet `template` afin d'initialiser votre propre projet de découverte musicale avec Spotify, pour cela utilisez le bouton "Use this template" disponible sur la page GitHub de ce dépôt.
 
@@ -51,7 +51,7 @@ Le fichier `sonar-project.properties` doit également être mis à jour avec les
 
 ## À propos du projet music-discovery-app-project
 
-Les instructions pour les exercices associés à ce template sont disponibles dans le projet GitHub [music-discovery-app-project](https://github.com/users/alexandre-girard-maif/projects/2/views/8).
+Les instructions pour les exercices associés à ce template sont disponibles dans le projet GitHub [music-discovery-app-project](https://github.com/users/qurnt1/projects/2/views/8).
 
 Le projet `music-discovery-app-project` contient une liste de tâches que vous devez suivre pour développer et améliorer l'application.
 
@@ -68,7 +68,7 @@ Le projet contient également un répertoire `instructions` avec des fichiers ma
 
 ## Synchronisation avec le template
 
-Ce projet utilise un workflow GitHub Actions pour synchroniser automatiquement les modifications apportées au template `music-discovery-app-template` avec votre propre dépôt cloné.
+Ce projet utilise un workflow GitHub Actions pour synchroniser automatiquement les modifications apportées au template `spotify_app` avec votre propre dépôt cloné.
 
 Le workflow est configuré pour s'exécuter périodiquement (toutes les semaines) et vérifier les mises à jour dans le template. Si des modifications sont détectées, une pull request est automatiquement créée dans votre dépôt avec les changements du template.
 Pour plus de détails sur le fonctionnement de la synchronisation, vous pouvez consulter le fichier `.github/workflows/template-sync.yml`.
