@@ -1,3 +1,5 @@
+// src/pages/TopTracksPage/TopTracksPage.jsx
+
 import { useState, useEffect } from 'react';
 import { buildTitle } from '../../constants/appMeta.js';
 import { useRequireToken } from '../../hooks/useRequireToken.js';
@@ -17,7 +19,7 @@ export const limit = 10;
 export const timeRange = 'short_term';
 
 /**
- * TopTracks Page 
+ * TopTracks Page
  * @returns {JSX.Element}
  */
 export default function TopTracksPage() {
@@ -35,33 +37,66 @@ export default function TopTracksPage() {
   const { token } = useRequireToken();
 
   // set document title
-  useEffect(() => { document.title = buildTitle('Top Tracks'); }, []);
-
+  useEffect(() => {
+    document.title = buildTitle('Top Tracks');
+  }, []);
 
   useEffect(() => {
-    if (!token) return; // wait for check or redirect
+    if (!token) return; // wait for auth check / redirect
+
     // fetch user top tracks when token changes
     fetchUserTopTracks(token, limit, timeRange)
-      .then(res => {
+      .then((res) => {
         if (res.error) {
-          if (!handleTokenError(res.error, navigate)) {
-            setError(res.error);
+          // Si le token est expiré, handleTokenError redirige et on ne touche pas à res.data
+          if (handleTokenError(res.error, navigate)) {
+            return;
           }
+
+          // Autre type d'erreur : on l'affiche
+          setError(res.error);
+          return;
         }
+
+        // Aucun erreur : on peut lire res.data.items en sécurité
         setTracks(res.data.items);
       })
-      .catch(err => { setError(err.message); })
-      .finally(() => { setLoading(false); });
+      .catch((err) => {
+        setError(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [token, navigate]);
 
   return (
-    <section className="tracks-container page-container" aria-labelledby="tracks-title">
-      <h1 id="tracks-title" className="tracks-title page-title" >Your Top {tracks.length} Tracks of the Month</h1>
-      {loading && <output className="tracks-loading" data-testid="loading-indicator">Loading top tracks…</output>}
-      {error && !loading && <div className="tracks-error" role="alert">{error}</div>}
+    <section
+      className="tracks-container page-container"
+      aria-labelledby="tracks-title"
+    >
+      <h1 id="tracks-title" className="tracks-title page-title">
+        Your Top {tracks.length} Tracks of the Month
+      </h1>
+
+      {loading && (
+        <output
+          className="tracks-loading"
+          data-testid="loading-indicator"
+        >
+          Loading top tracks…
+        </output>
+      )}
+
+      {error && !loading && (
+        <div className="tracks-error" role="alert">
+          {error}
+        </div>
+      )}
+
       {!loading && !error && (
         <ol className="tracks-list">
           {tracks.slice(0, 10).map((track, i) => (
+            // index 0-based pour matcher la logique 🥇/🥈/🥉 dans TrackItem
             <TrackItem key={track.id} track={track} index={i} />
           ))}
         </ol>
