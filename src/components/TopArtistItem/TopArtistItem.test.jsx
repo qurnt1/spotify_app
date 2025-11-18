@@ -50,7 +50,7 @@ describe('TopArtistItem component', () => {
             followers: { total: 500 },
             external_urls: { spotify: 'https://open.spotify.com/artist/artist2' }
         };
-        render(<TopArtistItem artist={artist} index={1} />);
+        render(<TopArtistItem artist={artist} index={0} />);
 
         // Verify list item rendering and having expected content
         const listItem = screen.getByTestId(`top-artist-item-${artist.id}`);
@@ -60,7 +60,7 @@ describe('TopArtistItem component', () => {
         expect(within(listItem).queryByAltText(artist.name)).not.toBeInTheDocument();
 
         // details assertions
-        expect(listItem).toHaveTextContent(artist.name);
+        expect(listItem).toHaveTextContent(`1. ${artist.name}`);
         expect(listItem).toHaveTextContent(`Genres: ${artist.genres.join(', ')}`);
         expect(listItem).toHaveTextContent(`Followers: ${artist.followers.total.toLocaleString()}`);
 
