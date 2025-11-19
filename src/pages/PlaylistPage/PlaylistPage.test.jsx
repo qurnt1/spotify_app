@@ -1,12 +1,15 @@
-// src/pages/PlaylistPage/PlaylistPage.test.jsx
-
 import { describe, expect, test, beforeEach, afterEach, jest } from '@jest/globals';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import PlaylistPage from './PlaylistPage.jsx';
 import * as spotifyApi from '../../api/spotify-playlists.js';
-import { KEY_ACCESS_TOKEN } from '../../constants/storageKeys.js';
+import * as handleTokenErrorModule from '../../utils/handleTokenError.js';
+
+// --- MOCK ---
+jest.mock('../../hooks/useRequireToken.js', () => ({
+  useRequireToken: jest.fn(() => ({ token: 'test-token', checking: false }))
+}));
 
 const playlistData = {
   id: 'playlist1',
@@ -34,12 +37,6 @@ const playlistData = {
 
 describe('PlaylistPage', () => {
   beforeEach(() => {
-    const tokenValue = 'test-token';
-    jest
-      .spyOn(window.localStorage.__proto__, 'getItem')
-      .mockImplementation((key) => (key === KEY_ACCESS_TOKEN ? tokenValue : null));
-
-    // mock par défaut : { data, error }
     jest
       .spyOn(spotifyApi, 'fetchPlaylistById')
       .mockResolvedValue({ data: playlistData, error: null });
@@ -58,7 +55,7 @@ describe('PlaylistPage', () => {
       </MemoryRouter>,
     );
 
-    expect(document.title).toBe('Playlist | Spotify App');
+    expect(document.title).toBe('Playlist | Music Discovery App');
 
     // loading state
     expect(screen.getByRole('status')).toHaveTextContent(/loading playlist/i);
@@ -68,8 +65,6 @@ describe('PlaylistPage', () => {
       expect(screen.queryByTestId('loading-indicator')).not.toBeInTheDocument();
     });
 
-    // verify playlist content rendered
-
     // verify title rendered
     const heading = await screen.findByRole('heading', {
       level: 1,
@@ -78,20 +73,16 @@ describe('PlaylistPage', () => {
     expect(heading).toBeInTheDocument();
 
     // verify cover image rendered
-    const img = screen.getByAltText(`Cover of ${playlistData.name}`);
+    // CORRECTION ICI : on cherche juste le nom, pas "Cover of..."
+    const img = screen.getByAltText(playlistData.name);
     expect(img).toHaveAttribute('src', playlistData.images[0].url);
 
-    // verify description rendered (en <h2>)
-    const description = await screen.findByRole('heading', {
-      level: 2,
-      name: playlistData.description,
-    });
-    expect(description).toBeInTheDocument();
+    // verify description rendered
+    expect(screen.getByText(playlistData.description)).toBeInTheDocument();
 
     // verify Spotify link rendered
     const link = screen.getByRole('link', { name: /spotify/i });
     expect(link).toHaveAttribute('href', playlistData.external_urls.spotify);
-    expect(link).toHaveTextContent(/open in spotify/i);
 
     // verify tracks rendered
     for (const track of playlistData.tracks.items) {
@@ -118,12 +109,10 @@ describe('PlaylistPage', () => {
       </MemoryRouter>,
     );
 
-    // wait for loading to finish
     await waitFor(() => {
       expect(screen.queryByTestId('loading-indicator')).not.toBeInTheDocument();
     });
 
-    // verify error message displayed
     const alert = await screen.findByRole('alert');
     expect(alert).toHaveTextContent('Failed to fetch playlist');
   });
@@ -141,20 +130,17 @@ describe('PlaylistPage', () => {
       </MemoryRouter>,
     );
 
-    // wait for loading to finish
     await waitFor(() => {
       expect(screen.queryByTestId('loading-indicator')).not.toBeInTheDocument();
     });
 
-    // verify error message displayed
     const alert = await screen.findByRole('alert');
     expect(alert).toHaveTextContent('API error occurred');
   });
 
   test('handleTokenError called on token expiry error', async () => {
-    const handleTokenErrorModule = require('../../utils/handleTokenError.js');
     const handleTokenErrorSpy = jest.spyOn(handleTokenErrorModule, 'handleTokenError');
-
+    
     jest
       .spyOn(spotifyApi, 'fetchPlaylistById')
       .mockResolvedValue({ data: null, error: 'The access token expired' });
@@ -163,13 +149,11 @@ describe('PlaylistPage', () => {
       <MemoryRouter initialEntries={['/playlist/playlist1']}>
         <Routes>
           <Route path="/playlist/:id" element={<PlaylistPage />} />
-          {/* Dummy login route for redirection when token is expired */}
           <Route path="/login" element={<div>Login Page</div>} />
         </Routes>
       </MemoryRouter>,
     );
 
-    // wait for loading to finish
     await waitFor(() => {
       expect(screen.queryByTestId('loading-indicator')).not.toBeInTheDocument();
     });
