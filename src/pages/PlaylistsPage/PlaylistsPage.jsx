@@ -72,7 +72,6 @@ export default function PlaylistsPage() {
         <output
           className="playlists-loading"
           data-testid="loading-indicator"
-          role="status"
         >
           Loading playlists…
         </output>
