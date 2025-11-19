@@ -61,7 +61,6 @@ export default function PlaylistPage() {
     <section
       className="playlist-detail-container page-container"
       aria-labelledby="playlist-detail-title"
-      role="region"
     >
       <header className="playlist-detail-header">
         {playlist?.images?.[0]?.url && (
