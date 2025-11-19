@@ -116,28 +116,27 @@ export default function PlaylistPage() {
       )}
 
       {!loading && !error && (
-        <>
-          {tracks.length === 0 ? (
-            <p className="playlist-detail-empty">
-              This playlist is empty.
-            </p>
-          ) : (
-            <>
-              <h2 className="playlist-detail-tracks-title">
-                Tracks ({tracks.length})
-              </h2>
-              <ol className="playlist-detail-tracks-list">
-                {tracks.map((track, index) => (
-                  <TrackItem
-                    key={track.id}
-                    track={track}
-                    index={index}
-                  />
-                ))}
-              </ol>
-            </>
-          )}
-        </>
+        // Fragment <>...</> supprimé ici
+        tracks.length === 0 ? (
+          <p className="playlist-detail-empty">
+            This playlist is empty.
+          </p>
+        ) : (
+          <>
+            <h2 className="playlist-detail-tracks-title">
+              Tracks ({tracks.length})
+            </h2>
+            <ol className="playlist-detail-tracks-list">
+              {tracks.map((track, index) => (
+                <TrackItem
+                  key={track.id}
+                  track={track}
+                  index={index}
+                />
+              ))}
+            </ol>
+          </>
+        )
       )}
     </section>
   );
