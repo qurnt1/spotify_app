@@ -9,6 +9,7 @@ import Layout from './components/Layout/Layout.jsx';
 import LoginPage from './pages/LoginPage/LoginPage.jsx';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage.jsx';
 import AccountPage from './pages/AccountPage/AccountPage.jsx';
+import DashboardPage from './pages/DashboardPage/DashboardPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
       { path: 'top-artists', element: <TopArtistsPage /> },
       { path: 'playlists', element: <PlaylistsPage /> },
       { path: 'playlist/:id', element: <PlaylistPage /> },
+      { path: 'dashboard', element: <DashboardPage /> },
       { path: '*', element: <NotFoundPage /> }
     ]
   }
