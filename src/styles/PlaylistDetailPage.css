@@ -1,0 +1,85 @@
+.playlist-detail-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.playlist-detail-header {
+  display: flex;
+  gap: 2rem;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  background: rgba(0, 0, 0, 0.15);
+  align-items: center;
+}
+
+.playlist-detail-cover {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 1rem;
+}
+
+.playlist-detail-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.playlist-detail-title {
+  margin: 0;
+}
+
+.playlist-detail-description {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.playlist-detail-owner {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.playlist-detail-open-btn {
+  margin-top: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+  background-color: #1db954;
+  color: #fff;
+}
+
+.playlist-detail-open-btn:hover {
+  filter: brightness(1.05);
+}
+
+.playlist-detail-tracks-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.playlist-detail-tracks-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.playlist-detail-loading {
+  font-style: italic;
+}
+
+.playlist-detail-error {
+  color: #ff4d4d;
+}
+
+.playlist-detail-empty {
+  opacity: 0.8;
+}
