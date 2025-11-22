@@ -23,6 +23,8 @@ export default function PlaylistsPage() {
 
   // state for playlists data
   const [playlists, setPlaylists] = useState([]);
+  const [totalPlaylists, setTotalPlaylists] = useState(0);
+
 
   // state for loading and error
   const [loading, setLoading] = useState(true);
@@ -51,6 +53,7 @@ export default function PlaylistsPage() {
         }
         // Success
         setPlaylists(res.data.items);
+        setTotalPlaylists(res.data.total);
         setLoading(false);
       })
       .catch(err => { 
@@ -62,9 +65,19 @@ export default function PlaylistsPage() {
   return (
     <section className="playlists-container page-container" aria-labelledby="playlists-title">
       <h1 id="playlists-title" className="playlists-title page-title">Your Playlists</h1>
-      <h2 className="playlists-count">{limit} Playlists</h2>
-      {loading && <output className="playlists-loading" data-testid="loading-indicator">Loading playlists…</output>}
+      <h2 className="playlists-count">
+        {`${playlists.length} of ${totalPlaylists} Playlists`}
+      </h2>
+      {loading && (
+        <output
+          className="playlists-loading"
+          data-testid="loading-indicator"
+        >
+          Loading playlists…
+        </output>
+      )}
       {error && !loading && <div className="playlists-error" role="alert">{error}</div>}
+
       {!loading && !error && (
         <ol className="playlists-list">
           {playlists.map((playlist) => (
