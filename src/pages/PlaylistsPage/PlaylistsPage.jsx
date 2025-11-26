@@ -1,3 +1,5 @@
+// src/pages/PlaylistsPage/PlaylistsPage.jsx
+
 import { useState, useEffect } from 'react';
 import { buildTitle } from '../../constants/appMeta.js';
 import { useRequireToken } from '../../hooks/useRequireToken.js';
@@ -25,7 +27,6 @@ export default function PlaylistsPage() {
   const [playlists, setPlaylists] = useState([]);
   const [totalPlaylists, setTotalPlaylists] = useState(0);
 
-
   // state for loading and error
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -35,7 +36,6 @@ export default function PlaylistsPage() {
 
   // Set document title
   useEffect(() => { document.title = buildTitle('Playlists'); }, []);
-
 
   useEffect(() => {
     if (!token) return; // wait for auth check
