@@ -1,4 +1,4 @@
-[![Build and Test](https://github.com/qurnt1/spotify_app/actions/workflows/ci.yml/badge.svg)](https://github.com/qurnt1/spotify_app/actions/workflows/ci.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=qurnt1-1_spotify-app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=qurnt1-1_spotify-app)  [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=qurnt1-1_spotify-app&metric=coverage)](https://sonarcloud.io/summary/new_code?id=qurnt1-1_spotify-app)
+[![Build and Test](https://github.com/qurnt1-1/qurnt1-1_spotify-app/actions/workflows/ci.yml/badge.svg)](https://github.com/qurnt1-1/qurnt1-1_spotify-app/actions/workflows/ci.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=qurnt1-1_qurnt1-1_spotify-app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=qurnt1-1_qurnt1-1_spotify-app) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=qurnt1-1_qurnt1-1_spotify-app&metric=coverage)](https://sonarcloud.io/summary/new_code?id=qurnt1-1_qurnt1-1_spotify-app)
 
 
 # Music Discovery App
@@ -68,7 +68,7 @@ Le projet contient également un répertoire `instructions` avec des fichiers ma
 
 ## Synchronisation avec le template
 
-Ce projet utilise un workflow GitHub Actions pour synchroniser automatiquement les modifications apportées au template `spotify_app` avec votre propre dépôt cloné.
+Ce projet utilise un workflow GitHub Actions pour synchroniser automatiquement les modifications apportées au template `qurnt1-1_spotify-app` avec votre propre dépôt cloné.
 
 Le workflow est configuré pour s'exécuter périodiquement (toutes les semaines) et vérifier les mises à jour dans le template. Si des modifications sont détectées, une pull request est automatiquement créée dans votre dépôt avec les changements du template.
 Pour plus de détails sur le fonctionnement de la synchronisation, vous pouvez consulter le fichier `.github/workflows/template-sync.yml`.
