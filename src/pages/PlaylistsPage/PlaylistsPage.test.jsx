@@ -108,11 +108,11 @@ describe('PlaylistsPage', () => {
     // should render heading of level 2 showing total playlist count
     const countHeading = await screen.findByRole('heading', {
       level: 2,
-      name: `${limit} Playlists`,
+      name: `${playlistsData.items.length} of ${playlistsData.total} Playlists`,
     });
     expect(countHeading).toBeInTheDocument();
 
-    // verify each playlist item rendered, don't check details here as covered in PlaylistItem tests
+    // verify each playlist item rendered
     for (const playlist of playlistsData.items) {
       expect(
         await screen.findByTestId(`playlist-item-${playlist.id}`),
@@ -198,7 +198,7 @@ describe('PlaylistsPage', () => {
     // should have heading level 2 with appropriate class name
     const heading2 = screen.getByRole('heading', {
       level: 2,
-      name: `${limit} Playlists`,
+      name: `${playlistsData.items.length} of ${playlistsData.total} Playlists`,
     });
     expect(heading2).toHaveClass('playlists-count');
 

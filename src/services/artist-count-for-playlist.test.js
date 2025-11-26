@@ -62,4 +62,35 @@ describe("artistCountForPlaylist", () => {
 
     consoleSpy.mockRestore();
   });
+
+  test("throws if token is missing", async () => {
+    await expect(
+      artistCountForPlaylist(undefined, "playlistABC")
+    ).rejects.toThrow("Spotify access token is required");
+  });
+
+  test("throws if playlist id is missing", async () => {
+    await expect(
+      artistCountForPlaylist("token123")
+    ).rejects.toThrow("Playlist id is required");
+  });
+
+  test("returns undefined and logs error when response contains error field", async () => {
+    const mockError = new Error("Bad request");
+    fetchPlaylistById.mockResolvedValue({
+      data: null,
+      error: mockError,
+    });
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+    const result = await artistCountForPlaylist("token123", "playlistABC");
+
+    expect(result).toBeUndefined();
+    expect(consoleSpy).toHaveBeenCalledTimes(1);
+    const callArgs = consoleSpy.mock.calls[0];
+    expect(callArgs[0]).toMatch(/Error fetching playlist/);
+    expect(callArgs[1]).toBe(mockError);
+
+    consoleSpy.mockRestore();
+  });
 });
