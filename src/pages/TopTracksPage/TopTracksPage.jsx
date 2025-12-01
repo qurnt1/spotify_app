@@ -44,22 +44,14 @@ export default function TopTracksPage() {
     fetchUserTopTracks(token, limit, timeRange)
       .then(res => {
         if (res.error) {
-          // If token error implies redirect, strictly DO NOT set loading to false
-          if (handleTokenError(res.error, navigate)) {
-            return;
+          if (!handleTokenError(res.error, navigate)) {
+            setError(res.error);
           }
-          setError(res.error);
-          setLoading(false);
-          return;
         }
-        // Success
         setTracks(res.data.items);
-        setLoading(false);
       })
-      .catch(err => { 
-        setError(err.message); 
-        setLoading(false);
-      });
+      .catch(err => { setError(err.message); })
+      .finally(() => { setLoading(false); });
   }, [token, navigate]);
 
   return (

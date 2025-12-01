@@ -13,7 +13,8 @@ import { useNavigate } from 'react-router-dom';
  */
 export const limit = 10;
 
-/** * Time range for top artists
+/** 
+ * Time range for top artists
  */
 export const timeRange = 'short_term';
 
@@ -40,30 +41,18 @@ export default function TopArtistsPage() {
 
   useEffect(() => {
     if (!token) return; // wait for auth check
-    
     // fetch user top artists when token changes
     fetchUserTopArtists(token, limit, timeRange)
       .then(res => {
         if (res.error) {
-          // If token error implies redirect, strictly DO NOT set loading to false
-          // to avoid flashing the component content before redirect happens.
-          if (handleTokenError(res.error, navigate)) {
-            return; 
+          if (!handleTokenError(res.error, navigate)) {
+            setError(res.error);
           }
-          // Handle other errors
-          setError(res.error);
-          setLoading(false);
-          return;
         }
-        // Success
         setArtists(res.data.items);
-        setLoading(false);
       })
-      .catch(err => { 
-        setError(err.message); 
-        setLoading(false);
-      });
-      // Note: We removed .finally() to prevent loading=false during redirects
+      .catch(err => { setError(err.message); })
+      .finally(() => { setLoading(false); });
   }, [token, navigate]);
 
   return (
