@@ -1,10 +1,8 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import WelcomePage from './pages/WelcomePage/WelcomePage.jsx';
-import DashboardPage from './pages/DashboardPage/DashboardPage.jsx';
 import TopTracksPage from './pages/TopTracksPage/TopTracksPage.jsx';
 import TopArtistsPage from './pages/TopArtistsPage/TopArtistsPage.jsx';
 import PlaylistsPage from './pages/PlaylistsPage/PlaylistsPage.jsx';
-import PlaylistPage from './pages/PlaylistPage/PlaylistPage.jsx';
 import Callback from './pages/Callback.jsx';
 import Layout from './components/Layout/Layout.jsx';
 import LoginPage from './pages/LoginPage/LoginPage.jsx';
@@ -20,11 +18,9 @@ const router = createBrowserRouter([
       { path: 'login', element: <LoginPage /> },
       { path: 'callback', element: <Callback /> },
       { path: 'account', element: <AccountPage /> },
-      { path: 'dashboard', element: <DashboardPage /> },
       { path: 'top-tracks', element: <TopTracksPage /> },
       { path: 'top-artists', element: <TopArtistsPage /> },
       { path: 'playlists', element: <PlaylistsPage /> },
-      { path: 'playlist/:id', element: <PlaylistPage /> },
       { path: '*', element: <NotFoundPage /> }
     ]
   }

@@ -39,7 +39,6 @@ export default function AccountPage() {
           if (!handleTokenError(res.error, navigate)) {
             setError(res.error);
           }
-          return;
         }
         setProfile(res.data);
       })

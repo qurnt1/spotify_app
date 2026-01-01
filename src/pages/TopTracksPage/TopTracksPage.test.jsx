@@ -1,3 +1,5 @@
+// src/pages/TopTracksPage.test.jsx
+
 import { describe, expect, test, beforeEach, afterEach, jest } from '@jest/globals';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -115,21 +117,17 @@ describe('TopTracksPage', () => {
     });
 
     test('redirects to login on token expiration', async () => {
-        // IMPORTANT: Override the default success mock to simulate an expired token error
-        jest.spyOn(spotifyApi, 'fetchUserTopTracks').mockResolvedValue({ 
-            data: null, 
-            error: 'The access token expired' 
-        });
-        
-        renderTopTracksPage(); 
+        // Mock fetchUserTopTracks to return token expired error
+        jest.spyOn(spotifyApi, 'fetchUserTopTracks').mockResolvedValue({ tracks: [], error: 'The access token expired' });
 
-        // Wait for loading to finish (it finishes because the component unmounts on redirect)
+        // Render the TopTracksPage
+        renderTopTracksPage();
+
+        // Wait for loading to finish
         await waitForLoadingToFinish();
 
         // Verify redirection to login page
-        await waitFor(() => {
-            expect(screen.getByText('Login Page')).toBeInTheDocument();
-        });
+        expect(screen.getByText('Login Page')).toBeInTheDocument();
     });
 
     test('verify styling and accessibility attributes using role', async () => {
